@@ -6,7 +6,7 @@ function numOfMoviesWatched() {
   var response=UrlFetchApp.fetch(url,{"headers":{//Setting URL & headers to the querry
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
-    'trakt-api-key':'b9042f3cd3fa0d4610a28e5052d751a5687594dd79c13bd2a22ce104539ccd70'//Mention your api key - trakt.tv/oauth/applications
+    'trakt-api-key':''//Mention your api key between the '' - trakt.tv/oauth/applications
   }});
 
   var headersFound=response.getHeaders();//This will load the headers found when the above url is fetched.
