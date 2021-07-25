@@ -23,4 +23,6 @@ function numOfMoviesWatched() {
   var numOfMovies=data.numOfMovies;//this will load the number of movies. In the header it would be mentioned.
 
   Logger.log(numOfMovies);
+  
+  return numOfMovies;//we will be calling this function from one of the other functions and we will need this in return.
 }
