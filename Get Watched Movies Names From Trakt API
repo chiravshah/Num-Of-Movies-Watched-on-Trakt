@@ -1,0 +1,51 @@
+function getWatchedMovieNames(){
+  var traktUsername="";//set the trakt username you want. 
+  
+  var fileId="";//google sheet id where you want to save the backup. Enter the id between inverted commas
+  
+  var numOfMovies=numOfMoviesWatched();//this will load the number of movies.
+  
+  var numOfPages=Math.ceil(numOfMovies/10);//Trakt only sends 10 movies together per page and hence we are trying to find the number of pages here.
+
+  //it will create a new sheet named movies. it will also set that sheet's id in the var sheet.
+  var sheet=SpreadsheetApp.openById(fileId).insertSheet().setName("Movies");
+
+  sheet.getRange("A1").setValue("Movie Names").setFontWeight("bold");//it will give heading and bold it.
+  sheet.getRange("B1").setValue("Date watched on").setFontWeight("bold");//it will give heading and bold it.
+
+  var rowNum=2;//because we want to start putting movie names from row number 2 because on row 1, headings are put in
+
+  for(var i=1;i<=numOfPages;i++){//it will run for as many pages are there in your history.
+    //the url which will fetch the data. variable i is the page number here
+    var url = "https://api.trakt.tv/users/"+traktUsername+"/history/movies/?page="+i;
+
+    var headers={"headers":{//setting the headers so that the API knows who is calling it.
+      'Content-Type': 'application/json',
+      'trakt-api-version': '2',
+      'trakt-api-key':''//set your own API key / Client ID. Enter the id between inverted commas
+    }};
+
+    var response=UrlFetchApp.fetch(url,headers);//querrying for the results.
+
+    var data=JSON.parse(response.getContentText());//Converting the results so that java scripts JSON function can be used.
+    
+    for(var j=0;j<data.length;j++){//it will run for as many times as there are movies in the array data.
+      //the movie details will be in the data array on the j number. 
+      //And it will be inside the movie class. The name in the API is given heading as title.
+      var movieName=data[j].movie.title;
+
+      //The date in the API will be mentioned against the watched_at field.
+      var movieWatchedOn=data[j].watched_at;
+
+      //The above result will be in the format of "2021-07-23T17:14:53.000Z".
+      //Below code needs to be written to convert into "Jul 23, 2021, 10:44 PM"
+      movieWatchedOn=new Date(movieWatchedOn).toLocaleString("default",{
+        day:"2-digit",month:"short",year:"numeric",hour: 'numeric', minute: 'numeric', hour12: true });
+
+      sheet.getRange(rowNum,1).setValue(movieName);//Setting movie name in google sheet. the 1 is the column number.
+      sheet.getRange(rowNum,2).setValue(movieWatchedOn); //setting date watched in google sheet
+
+      rowNum++;//increasing row number so that the next iteration gets entered in the next row.
+    }
+  }
+}
