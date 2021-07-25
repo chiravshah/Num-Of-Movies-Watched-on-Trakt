@@ -2,19 +2,23 @@ function numOfMoviesWatched() {
   var traktUsername="chiravshah";
 
   var url = "https://api.trakt.tv/users/"+traktUsername+"/history/movies/";//the url where API will find your data
-
-  var response=UrlFetchApp.fetch(url,{"headers":{//Setting URL & headers to the querry
+  
+  var headers = {"headers":{
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
-    'trakt-api-key':''//Mention your api key between the '' - trakt.tv/oauth/applications
-  }});
+    'trakt-api-key':'YOUR_API_KEY'//Mention your api key between the '' - trakt.tv/oauth/applications
+  }};
+
+  var response=UrlFetchApp.fetch(url,headers);//setting url and headears
 
   var headersFound=response.getHeaders();//This will load the headers found when the above url is fetched.
   var headersInString=JSON.stringify(headersFound);//Converting the headers we found in string value so that we can do the below thing
+  
+  //the replace is done because below methods won't work for words with dashes in between.
+  headersInString = headersInString.replace('x-pagination-item-count','numOfMovies');
 
   //this will parse the data in headers so that we can use Java Script's inbuilt methods to find values in the JSON.
-  //the replace is done because below methods won't work for words with dashes in between.
-  var data=JSON.parse(headersInString.replace('x-pagination-item-count','numOfMovies'));
+  var data=JSON.parse(headersInString);
 
   var numOfMovies=data.numOfMovies;//this will load the number of movies. In the header it would be mentioned.
 
